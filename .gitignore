@@ -1,1 +1,4 @@
 venv/
+# Ignore Excel files
+*.xlsx
+*.xls
