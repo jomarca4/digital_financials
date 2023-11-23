@@ -145,72 +145,62 @@ CIK_ENTITY_MAPPING = pd.read_csv('CIK_COMPANY_MAPPING.csv')
 
 #print(US_GAAP_ITEMS)
 print(len(US_GAAP_ITEMS['name']))
+tag_counter = 0
+for item,item1 in zip(US_GAAP_ITEMS['name'],US_GAAP_ITEMS['financial_statement_type']):
+    #clear variables to gain memory:
+    US_GAAP_ITEMS = None
+    #print(item,item1) #assets, balance shetet
+    fs_type = item1
+    time.sleep(0.25)
+    print(item) #SalesTypeLeaseNetInvestmentInLeaseExcludingAccruedInterestAfterAllowanceForCreditLossCurrent
+    #STARTS HERE
+    name_account_item = item #'CashAndCashEquivalentsAtCarryingValue'
+    #print(tag_counter)
 
-# Assume BATCH_SIZE is the number of records you process in each batch
-BATCH_SIZE = 100  # Adjust this based on your memory constraints
-
-# Function to process a batch of items
-def process_batch(batch_items, conn):
-    tag_counter = 0
-    for item,item1 in zip(US_GAAP_ITEMS['name'],US_GAAP_ITEMS['financial_statement_type']):
-        #clear variables to gain memory:
-        #print(item,item1) #assets, balance shetet
-        fs_type = item1
-        time.sleep(0.25)
-        print(item) #SalesTypeLeaseNetInvestmentInLeaseExcludingAccruedInterestAfterAllowanceForCreditLossCurrent
-        #STARTS HERE
-        name_account_item = item #'CashAndCashEquivalentsAtCarryingValue'
-        #print(tag_counter)
-
-        url = f'https://data.sec.gov/api/xbrl/frames/us-gaap/{name_account_item}/USD/{time_frame_of_request}.json'
-        response = requests.get(url,headers=headers)
-        #print(response)
-        try:
-            data = json.loads(response.text)
-        except:
-            print('name tag does not exist ',name_account_item)
-            print('tag counter is ', tag_counter)
-            #continue with next item in the loop
-            tag_counter = tag_counter + 1
-            continue
-        #csv file contains the entity to cik mapping
-        frames = data['data']
-        currency = data['uom']
-        unit_of_measurement = data['uom']
+    url = f'https://data.sec.gov/api/xbrl/frames/us-gaap/{name_account_item}/USD/{time_frame_of_request}.json'
+    response = requests.get(url,headers=headers)
+    #print(response)
+    try:
+        data = json.loads(response.text)
+    except:
+        print('name tag does not exist ',name_account_item)
+        print('tag counter is ', tag_counter)
+        #continue with next item in the loop
         tag_counter = tag_counter + 1
+        continue
+    #csv file contains the entity to cik mapping
+    frames = data['data']
+    currency = data['uom']
+    unit_of_measurement = data['uom']
+    tag_counter = tag_counter + 1
+    value = None
+    count = 0
+    #print(item)
+    
+    for item in frames:
         value = None
-        count = 0
-        #print(item)
-        
-        for item in frames:
-            value = None
-            entity_name = None
-            cik = None
-            date_fs = None
-            location = None
-            ticker = None
-            value = item['val']
-            entity_name = item['entityName']
-            cik = item['cik']
-            date_fs = item['end']
-            location = item['loc']
-            # Find the row with the matching CIK value to map to ENTITY NAME
-            ticker = CIK_ENTITY_MAPPING.loc[CIK_ENTITY_MAPPING['CIK'] == cik]
-            try:
-                ticker = ticker['COMPANY'].values[0]
-                ticker = ticker.upper()
-            except:
-                ticker = 'Not available'
-            #add leadings zeros since I need to have a 10 digit variable
-            cik = str(cik).zfill(10)
+        entity_name = None
+        cik = None
+        date_fs = None
+        location = None
+        ticker = None
+        value = item['val']
+        entity_name = item['entityName']
+        cik = item['cik']
+        date_fs = item['end']
+        location = item['loc']
+        # Find the row with the matching CIK value to map to ENTITY NAME
+        ticker = CIK_ENTITY_MAPPING.loc[CIK_ENTITY_MAPPING['CIK'] == cik]
+        try:
+            ticker = ticker['COMPANY'].values[0]
+            ticker = ticker.upper()
+        except:
+            ticker = 'Not available'
+        #add leadings zeros since I need to have a 10 digit variable
+        cik = str(cik).zfill(10)
 
-            add_new_income_statement(conn, entity_name, ticker, cik, location, year, quarter, fs_type, date_fs, currency, unit_of_measurement, value, name_account_item)
+        add_new_income_statement(conn, entity_name, ticker, cik, location, year, quarter, fs_type, date_fs, currency, unit_of_measurement, value, name_account_item)
 
-    print(records_added, records_added_2,records_added_1)
-# Main processing loop with batch processing
-for i in range(0, len(US_GAAP_ITEMS), BATCH_SIZE):
-    batch = US_GAAP_ITEMS.iloc[i:i + BATCH_SIZE]
-    process_batch(zip(batch['name'], batch['financial_statement_type']), conn)
-
+print(records_added, records_added_2,records_added_1)
 conn.close()
 logging.shutdown()
