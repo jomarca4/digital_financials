@@ -207,10 +207,15 @@ def process_batch(batch_items, conn):
             add_new_income_statement(conn, entity_name, ticker, cik, location, year, quarter, fs_type, date_fs, currency, unit_of_measurement, value, name_account_item)
 
     print(records_added, records_added_2,records_added_1)
+    del batch_items
+    gc.collect()
 # Main processing loop with batch processing
 for i in range(0, len(US_GAAP_ITEMS), BATCH_SIZE):
     batch = US_GAAP_ITEMS.iloc[i:i + BATCH_SIZE]
     process_batch(zip(batch['name'], batch['financial_statement_type']), conn)
+
+        # Clear memory
+
 
 conn.close()
 logging.shutdown()
