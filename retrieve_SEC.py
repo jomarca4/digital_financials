@@ -147,7 +147,7 @@ CIK_ENTITY_MAPPING = pd.read_csv('CIK_COMPANY_MAPPING.csv')
 print(len(US_GAAP_ITEMS['name']))
 
 # Assume BATCH_SIZE is the number of records you process in each batch
-BATCH_SIZE = 100  # Adjust this based on your memory constraints
+BATCH_SIZE = 20  # Adjust this based on your memory constraints
 
 # Function to process a batch of items
 def process_batch(batch_items, conn):
