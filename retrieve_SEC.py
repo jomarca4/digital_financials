@@ -134,11 +134,17 @@ financial_statement_id = 1
 time_frame_of_request = str(sys.argv[1])#'CY2022Q1'
 # Extract the year substring
 year = time_frame_of_request[2:6]
+#print(year)
 # Extract the quarter substring
 try:
     quarter = time_frame_of_request[7:8]
+    #print(len(time_frame_of_request))
+    if len(time_frame_of_request) == 6:
+        quarter = '9'
 except:
-    quarter = 'Full Year'
+    print('problem in the quarter transf here')
+    exit()
+
 #balance sheet included below
 #US_GAAP_ITEMS = pd.read_csv('US_GAAP_TAXONOMY.csv')
 US_GAAP_ITEMS = pd.read_excel('GAAP_Taxonomy_2022.xlsx',sheet_name='Calculation Link',engine='openpyxl') #balance_sheet|cash_flow|income_statement|other_comprehensive_income
