@@ -13,6 +13,8 @@ from sqlalchemy import create_engine, MetaData
 
 # Database credentials
 import os
+import gc
+
 
 db_name = os.environ.get('DB_NAME')
 db_user = os.environ.get('DB_USER')
@@ -147,7 +149,7 @@ CIK_ENTITY_MAPPING = pd.read_csv('CIK_COMPANY_MAPPING.csv')
 print(len(US_GAAP_ITEMS['name']))
 
 # Assume BATCH_SIZE is the number of records you process in each batch
-BATCH_SIZE = 20  # Adjust this based on your memory constraints
+BATCH_SIZE = 100  # Adjust this based on your memory constraints
 
 # Function to process a batch of items
 def process_batch(batch_items, conn):
@@ -205,10 +207,11 @@ def process_batch(batch_items, conn):
             cik = str(cik).zfill(10)
 
             add_new_income_statement(conn, entity_name, ticker, cik, location, year, quarter, fs_type, date_fs, currency, unit_of_measurement, value, name_account_item)
-
     print(records_added, records_added_2,records_added_1)
+
     del batch_items
     gc.collect()
+        
 # Main processing loop with batch processing
 for i in range(0, len(US_GAAP_ITEMS), BATCH_SIZE):
     batch = US_GAAP_ITEMS.iloc[i:i + BATCH_SIZE]
