@@ -41,6 +41,20 @@ def create_connection(db_name, db_user, db_password, db_host):
 conn = create_connection(db_name, db_user, db_password, db_host)
 # Create a cursor object
 cur = conn.cursor()
+
+
+
+
+def alter_table():
+        #below is the schema of the database
+
+    # create companies table
+    cur.execute('''
+   ALTER TABLE market_data
+ADD CONSTRAINT unique_company_date UNIQUE (company_id, date);
+    ''')
+alter_table()
+exit()
 def delete_duplicates_in_table():
         #below is the schema of the database
 

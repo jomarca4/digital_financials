@@ -1,20 +1,15 @@
 import psycopg2
-from alpaca_trade_api.rest import REST, TimeFrame
 import os
 import datetime
 import logging
 import time
+import requests
 
 # Set up logging
 logging.basicConfig(filename='stock_data_download.log', level=logging.INFO)
 
-# Alpaca API credentials
-API_KEY = os.environ.get('ALPACA_API_KEY')
-API_SECRET = os.environ.get('ALPACA_SECRET_KEY')
-BASE_URL = "https://paper-api.alpaca.markets"  # Update if necessary
-
-# Initialize Alpaca API
-alpaca_api = REST(API_KEY, API_SECRET, base_url=BASE_URL)
+# NASDAQ API credentials (assumed to be set as environment variables)
+NASDAQ_API_KEY = os.environ.get('NASDAQ_API_KEY')
 
 # Database credentials (assumed to be set as environment variables)
 db_name = os.environ.get('DB_NAME')
@@ -22,21 +17,21 @@ db_user = os.environ.get('DB_USER')
 db_password = os.environ.get('DB_PASSWORD')
 db_host = os.environ.get('DB_HOST')
 
-# Initialize Alpaca API
-alpaca_api = REST(API_KEY, API_SECRET, base_url=BASE_URL)
-
 # Set date range for the past year
 end_date = datetime.datetime.today()
 start_date = end_date - datetime.timedelta(days=365)
 
-# Format dates in 'YYYY-MM-DD' format for the API call
-start_date_str = start_date.strftime('%Y-%m-%d')
-end_date_str = end_date.strftime('%Y-%m-%d')
-
 def download_stock_data(ticker):
     try:
-        data = alpaca_api.get_bars(ticker, TimeFrame.Day, start=start_date_str, end=end_date_str).df
-        return data
+        # Construct the API URL for NASDAQ
+        #url = f"https://data.nasdaq.com/api/v3/datasets/WIKI/{ticker}.json?api_key={NASDAQ_API_KEY}&start_date={start_date.strftime('%Y-%m-%d')}&end_date={end_date.strftime('%Y-%m-%d')}"
+        url = f"https://data.nasdaq.com/api/v3/datatables/WIKI/PRICES.json?date.gte={start_date.strftime('yyyymmdd')}&date.lt={end_date.strftime('yyyymmdd')}&ticker={ticker}&api_key={NASDAQ_API_KEY}"
+        response = requests.get(url)
+        response.raise_for_status()  # Raises an HTTPError if the HTTP request returned an unsuccessful status code
+        data = response.json()
+        print(data)
+        exit()
+        return data  # You might need to adjust this based on the actual structure of NASDAQ's response
     except Exception as e:
         logging.error(f"Failed to download data for {ticker}. Error: {e}")
         print(e)
@@ -61,13 +56,9 @@ except Exception as e:
     conn.close()
     raise
 
-# Setting up a date range for the past year
-end_date = datetime.datetime.today()
-start_date = end_date - datetime.timedelta(days=300)
-
 # Batch processing variables
-batch_size = 30  # Number of companies to process in each batch
-request_delay = 10  # Delay between each batch in seconds
+batch_size = 100  # Number of companies to process in each batch
+request_delay = 1  # Delay between each batch in seconds
 
 # Download and store stock data in batches
 for i in range(0, len(companies), batch_size):
@@ -75,21 +66,27 @@ for i in range(0, len(companies), batch_size):
 
     for company_id, ticker_symbol in batch_companies:
         print(ticker_symbol)
-        ticker_symbol = 'AAPL'
         stock_data = download_stock_data(ticker_symbol)
         print(stock_data)
-        exit()
         if stock_data is not None:
-            try:
-                # Insert data into market_data table
-                for index, row in stock_data.iterrows():
+            for date, data in stock_data['datatable']['data']:
+                print(date,data)
+                exit()
+                try:
                     cur.execute("""
                         INSERT INTO market_data (company_id, date, open_price, close_price, high_price, low_price, volume) 
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        """, (company_id, index.date(), row['open'], row['close'], row['high'], row['low'], row['volume']))
-            except Exception as e:
-                logging.error(f"Error inserting data for {ticker_symbol}: {e}")
-    
+                        """, (company_id, date, data['open'], data['close'], data['high'], data['low'], data['volume']))
+                except IntegrityError:
+                    conn.rollback()  # Rollback the current transaction
+                    # Optionally, update the existing record or log the error
+                    logging.warning(f"Duplicate entry for {ticker_symbol} on {date}. Skipping insertion.")
+                    # Continue with the next iteration
+                    continue
+                except Exception as e:
+                    logging.error(f"Error inserting data for {ticker_symbol}: {e}")
+                    continue  # Skip to the next iteration on any other error
+
     # Commit after each batch and wait before proceeding to the next batch
     conn.commit()
     time.sleep(request_delay)

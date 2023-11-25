@@ -222,7 +222,8 @@ def process_batch(batch_items, conn):
 for i in range(0, len(US_GAAP_ITEMS), BATCH_SIZE):
     batch = US_GAAP_ITEMS.iloc[i:i + BATCH_SIZE]
     process_batch(zip(batch['name'], batch['financial_statement_type']), conn)
-
+    del batch
+    gc.collect()
         # Clear memory
 
 
