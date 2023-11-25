@@ -578,3 +578,47 @@ ERROR:root:Failed to download data for ITT. Error: 429 Client Error: Too Many Re
 ERROR:root:Failed to download data for AXP. Error: 429 Client Error: Too Many Requests for url: https://data.nasdaq.com/api/v3/datatables/WIKI/PRICES.json?date.gte=2022-11-24&date.lt=2023-11-24&ticker=AXP&api_key=None
 ERROR:root:Failed to download data for ASB. Error: 429 Client Error: Too Many Requests for url: https://data.nasdaq.com/api/v3/datatables/WIKI/PRICES.json?date.gte=2022-11-24&date.lt=2023-11-24&ticker=ASB&api_key=None
 ERROR:root:Failed to download data for SNV. Error: 429 Client Error: Too Many Requests for url: https://data.nasdaq.com/api/v3/datatables/WIKI/PRICES.json?date.gte=2022-11-24&date.lt=2023-11-24&ticker=SNV&api_key=None
+ERROR:root:Failed to download data for ITT. Error: name 'http' is not defined
+ERROR:root:Failed to download data for ITT. Error: name 'json' is not defined
+ERROR:root:Failed to download data for ITT. Error: name 'json' is not defined
+ERROR:root:Failed to download data for ITT. Error: name 'json' is not defined
+ERROR:root:Failed to download data for ITT. Error: name 'json' is not defined
+ERROR:root:Failed to download data for ITT. Error: name 'json' is not defined
+ERROR:root:Failed to download data for Not available. Error: 'historical'
+ERROR:root:Error inserting data: syntax error at or near "#"
+LINE 4: ...      ON CONFLICT (company_id, date) DO NOTHING;  # Assuming...
+                                                             ^
+
+ERROR:root:Failed to download data for SOV. Error: 'historical'
+ERROR:root:Error inserting data: syntax error at or near "#"
+LINE 4: ...      ON CONFLICT (company_id, date) DO NOTHING;  # Assuming...
+                                                             ^
+
+ERROR:root:Error inserting data: syntax error at or near "#"
+LINE 4: ...      ON CONFLICT (company_id, date) DO NOTHING;  # Assuming...
+                                                             ^
+
+ERROR:root:Error inserting data: syntax error at or near "#"
+LINE 4: ...      ON CONFLICT (company_id, date) DO NOTHING;  # Assuming...
+                                                             ^
+
+ERROR:root:Error inserting data: syntax error at or near "#"
+LINE 4: ...      ON CONFLICT (company_id, date) DO NOTHING;  # Assuming...
+                                                             ^
+
+ERROR:root:Error inserting data: there is no unique or exclusion constraint matching the ON CONFLICT specification
+
+ERROR:root:Error inserting data: there is no unique or exclusion constraint matching the ON CONFLICT specification
+
+ERROR:root:Failed to download data for MTB. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/MTB?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for FHB. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/FHB?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for FHN. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/FHN?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for FNB. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/FNB?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for ITT. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/ITT?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for AXP. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/AXP?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for ASB. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/ASB?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for ITT. Error: 429 Client Error: Too Many Requests for url: https://financialmodelingprep.com/api/v3/historical-price-full/ITT?from=2019-10-17&to=2023-11-25&apikey=f76532b592c5d9906bbb88e28b4ba83d
+ERROR:root:Failed to download data for Not available. Error: 'historical'
+ERROR:root:Failed to download data for SOV. Error: 'historical'
+ERROR:root:Failed to download data for Not available. Error: 'historical'
+ERROR:root:Failed to download data for SOV. Error: 'historical'

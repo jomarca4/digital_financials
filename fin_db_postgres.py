@@ -80,6 +80,7 @@ def create_database_schema(cur):
             volume BIGINT,
             market_cap DECIMAL,
             FOREIGN KEY (company_id) REFERENCES companies (id)
+            UNIQUE (company_id, date)
         )
     ''')
 

@@ -42,9 +42,53 @@ conn = create_connection(db_name, db_user, db_password, db_host)
 # Create a cursor object
 cur = conn.cursor()
 
+def add_new_table():
 
 
+    # Load the Excel file
+    df = pd.read_excel('GAAP_Taxonomy_2022.xlsx', sheet_name='Calculation Link')
 
+    # Connect to your database
+
+    # Create the SQL table if it doesn't exist
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS financial_statement_labels (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        label TEXT,
+        depth INTEGER,
+        financial_statement_type TEXT
+    )
+    ''')
+    conn.commit()
+
+    # Prepare the data for insertion
+    # We're selecting only the columns we need
+    data_to_insert = df[['name', 'label', 'depth', 'financial_statement_type']]
+
+    # Insert the data
+    # psycopg2.extras.execute_batch can be used for efficient bulk inserts
+    from psycopg2.extras import execute_batch
+
+    query = """
+    INSERT INTO financial_statement_labels (name, label, depth, financial_statement_type) 
+    VALUES (%s, %s, %s, %s)
+    """
+
+    # Convert DataFrame to list of tuples
+    data_tuples = list(data_to_insert.itertuples(index=False, name=None))
+
+    # Execute the query
+    execute_batch(cur, query, data_tuples)
+    conn.commit()
+
+    # Close the cursor and connection
+    cur.close()
+    conn.close()
+
+
+add_new_table()
+exit()
 def alter_table():
         #below is the schema of the database
 
