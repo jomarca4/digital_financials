@@ -156,10 +156,10 @@ print(len(US_GAAP_ITEMS['name']))
 
 # Assume BATCH_SIZE is the number of records you process in each batch
 BATCH_SIZE = 100  # Adjust this based on your memory constraints
-tag_counter = 0
 # Function to process a batch of items
 def process_batch(batch_items, conn):
-    
+    tag_counter = 0
+
     for item,item1 in zip(US_GAAP_ITEMS['name'],US_GAAP_ITEMS['financial_statement_type']):
         #clear variables to gain memory:
         #print(item,item1) #assets, balance shetet
