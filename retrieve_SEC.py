@@ -222,6 +222,7 @@ for i in range(0, len(US_GAAP_ITEMS), BATCH_SIZE):
     batch = US_GAAP_ITEMS.iloc[i:i + BATCH_SIZE]
     process_batch(zip(batch['name'], batch['financial_statement_type']), conn)
     print(records_added, records_added_2,records_added_1)
+    exit()
     del batch
     gc.collect()
 
