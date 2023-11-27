@@ -156,10 +156,10 @@ print(len(US_GAAP_ITEMS['name']))
 
 # Assume BATCH_SIZE is the number of records you process in each batch
 BATCH_SIZE = 100  # Adjust this based on your memory constraints
-
+tag_counter = 0
 # Function to process a batch of items
 def process_batch(batch_items, conn):
-    tag_counter = 0
+    
     for item,item1 in zip(US_GAAP_ITEMS['name'],US_GAAP_ITEMS['financial_statement_type']):
         #clear variables to gain memory:
         #print(item,item1) #assets, balance shetet
@@ -213,7 +213,6 @@ def process_batch(batch_items, conn):
             cik = str(cik).zfill(10)
 
             add_new_income_statement(conn, entity_name, ticker, cik, location, year, quarter, fs_type, date_fs, currency, unit_of_measurement, value, name_account_item)
-    print(records_added, records_added_2,records_added_1)
 
     del batch_items
     gc.collect()
@@ -222,8 +221,10 @@ def process_batch(batch_items, conn):
 for i in range(0, len(US_GAAP_ITEMS), BATCH_SIZE):
     batch = US_GAAP_ITEMS.iloc[i:i + BATCH_SIZE]
     process_batch(zip(batch['name'], batch['financial_statement_type']), conn)
+    print(records_added, records_added_2,records_added_1)
     del batch
     gc.collect()
+
         # Clear memory
 
 
