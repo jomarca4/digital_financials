@@ -12,14 +12,15 @@ from datetime import datetime
 logging.basicConfig(filename='stock_data_dividend.log', level=logging.INFO)
 
 # NASDAQ API credentials (assumed to be set as environment variables)
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from a .env file
+
+#retrieve DB variables
+db_name = os.environ.get('DB_NAME')
+db_user = os.environ.get('DB_USER')
+db_password = os.environ.get('DB_PASSWORD')
+db_host = os.environ.get('DB_HOST')
 FMP_API_KEY = os.environ.get('FMP_KEY')
-
-# Database credentials (assumed to be set as environment variables)
-db_name = os.environ.get('QAS_DB_NAME')
-db_user = os.environ.get('QAS_DB_USER')
-db_password = os.environ.get('QAS_DB_PASSWORD')
-db_host = os.environ.get('QAS_DB_HOST')
-
 
 def get_companies():
     cur.execute("SELECT id, ticker_symbol FROM public.companies")
